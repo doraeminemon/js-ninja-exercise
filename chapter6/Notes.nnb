@@ -1,0 +1,129 @@
+{
+    "cells": [
+        {
+            "language": "markdown",
+            "source": [
+                "# Chapter 6\nFunctions for the future: generators and promises.\n\n## Generator function\n- Allows for DOM traversal that doesn't use recursive function.\n- Create a new execution context and only discard that execution context when done. Which means while it is suspended, it can be resumed.\n- Generator function will have its own \"state\", and that state will change during the lifetime of the function."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "function* NinjaGenerator(action) {\n  yield \"Hattori \" + action\n  return \"Yoshi \" + action\n}\n\nconst ninjaIterator = NinjaGenerator(\"skulk\")\nconst result1 = ninjaIterator.next()\nconst result2 = ninjaIterator.next()\nresult1"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "{",
+                                "  value: \u001b[32m'Hattori skulk'\u001b[39m,",
+                                "  done: \u001b[33mfalse\u001b[39m",
+                                "}"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "The keyword `yield` meaning we are yielding the control flow for main thread so it's non-blocking.\n\n# Exercise"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "function *EvenGenerator() {\n  let num = 2\n  while(true) {\n    yield num;\n    num = num + 2\n  }\n}\n\nlet generator = EvenGenerator()\n\nlet a1 = generator.next().value // 2\nlet a2 = generator.next().value // 4\nlet a3 = EvenGenerator().next().value // 2\nlet a4 = generator.next().value // 6\n\nlet obj = { a1, a2, a3, a4 }\nobj"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "{",
+                                "  a1: \u001b[33m2\u001b[39m,",
+                                "  a2: \u001b[33m4\u001b[39m,",
+                                "  a3: \u001b[33m2\u001b[39m,",
+                                "  a4: \u001b[33m6\u001b[39m",
+                                "}"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "What's the content of the `ninjas` array after running the following code ?"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "function* NinjaGenerator() {\n  yield \"Yoshi\"\n  return \"Hattori\"\n  yield \"Hanzo\"\n}\n\nvar ninjas = []\n\nfor(let ninja of NinjaGenerator()) {\n  ninjas.push(ninja)\n}\n\nninjas"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "[",
+                                "  \u001b[32m'Yoshi'\u001b[39m",
+                                "]"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "function *Gen(val) {\n  val = yield val * 2\n  yield val\n}\n\nlet generator = Gen(2)\nlet a1 = generator.next(3).value\nlet a2 = generator.next(4).value\nlet obj = {a1, a2}\nobj"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "{",
+                                "  a1: \u001b[33m4\u001b[39m,",
+                                "  a2: \u001b[33m4\u001b[39m",
+                                "}"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "const promise = new Promise((resolve, reject) => {\n  resolve(\"Hattori\")\n  setTimeout(() => {\n    reject(\"Yoshi\")\n  }, 500)\n})\n\npromise\n  .then(val => console.log(\"Success:\" + val))\n  .catch(err => console.log(\"Error:\" + err))"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Success:Hattori",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
