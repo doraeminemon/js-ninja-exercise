@@ -1,7 +1,7 @@
-const assert = require('assert')
-
 function Ninja() {
   var feints = 0; // this is private inherently due to the constructor of it.
+  // or rather, it is "private" because when a new constructor is created, it create its own
+  // lexical constructor, similarly called "closures".
   this.getFeints = function () {
     return feints
   }
