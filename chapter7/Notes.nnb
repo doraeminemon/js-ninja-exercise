@@ -1,0 +1,180 @@
+{
+    "cells": [
+        {
+            "language": "markdown",
+            "source": [
+                "# JS Object\n\nA prototype is an object to which the search for a particular property can be delegated to. Prototype is similar to classes in OOP languages.\nIn JS, inheritance is implements with prototyping. The idea of prototyping is simple: every object can have a reference to its prototype, an object that if you search for a particular property, can be delegated to.\n\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "const yoshi = { skulk: true }\nconst hattori = { sneak: true }\n\nif ('skulk' in yoshi) console.log(\"yoshi can skulk\")\nif ('sneak' in yoshi) console.log(\"yoshi can sneak by default\")\n\nObject.setPrototypeOf(yoshi, hattori)\n\nif ('sneak' in yoshi) console.log(\"yoshi can now sneak\")\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "yoshi can skulk",
+                                "yoshi can now sneak",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "function Ninja() {}\nNinja.prototype.swingSword = function() { // every function has a prototype object, which we can freely modified\n  return true\n}\n\nconst ninja1 = Ninja()\nif (ninja1 === undefined) console.log('No instance of Ninja created')\n\nconst ninja2 = new Ninja()\nif (ninja2 && ninja2.swingSword && ninja2.swingSword()) console.log('New instance exists and method is callable')"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "No instance of Ninja created",
+                                "New instance exists and method is callable",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Instance property vs prototype property\n\nObserving the precedence of initialization activities\n\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "function Ninja() {\n  this.swung = false\n  this.swingSword = function() {\n    return !this.swung\n  }\n}\n\nNinja.prototype.swingSword = function () {\n  return this.swung\n}\n\nconst ninja = new Ninja()\nif (ninja.swingSword()) {\n  console.log('Called the instance method, not the prototype method') // instance method take precedence over prototype\n}"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Called the instance method, not the prototype method",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "There are 2 ways to verify the which object the instance belongs to, either through instanceof method, or by checking the constructor property of the object."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "function Ninja() {}\n\nconst ninja = new Ninja()\nconst ninja2 = new ninja.constructor()\n\nif (ninja2 instanceof Ninja) console.log(\"It's a ninja\")\nif (ninja !== ninja2) console.log(\"But not the same ninja\")"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "It's a ninja",
+                                "But not the same ninja",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Achieving inheritance\n\nThrough assigning the prototype object.\n\n## Configuring property\nIn JS, every object property is describe with a property descriptor through which we can configure the following keys:\n- `configurable` - if set to true, the property's descriptor can be changed.\n- `enumerable` - if set to true, the property shows up during a for-in loop over the object's property\n- `value` - specifies the value of the property. Defaults to `undefined`\n- `write-able` - if true, the value can be changed through an assignment.\n- `get`\n- `set`"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "var ninja = {}\nninja.name = \"Yoshi\"\nninja.weapon = \"kusarigama\"\n\nObject.defineProperty(ninja, \"sneaky\", {\n  configurable: false,\n  enumerable: false,\n  value: true,\n  writable: true\n})\n\nif ('sneaky' in ninja) console.log('we can access the new property')\nfor (let prop in ninja) {\n  if (prop !== undefined) console.log('An enum property', prop)\n}"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "we can access the new property",
+                                "An enum property name",
+                                "An enum property weapon",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "When trying to extend `Person` with `Ninja` ( or make Ninja a subclass of `Person`), we ran into the following problem:\nWhen we set a new `Person` object as a prototype of the `Ninja` constructor, we lose the original Ninja property, because it's useful for determining the function used to create our object instance that other developer might relies on it.\nThus we can used the new `defineProperty` to change the following listing."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "function Person() {}\nPerson.prototype.dance = function() {}\n\nfunction Ninja() {}\nNinja.prototype = new Person() // inheritance\n// we define a new non-enumerable constructor property pointing back to ninja\nObject.defineProperty(Ninja.prototype, \"constructor\", {\n  enumerable: false,\n  value: Ninja,\n  writable: true\n})\n\nvar ninja = new Ninja()\nif (ninja.constructor === Ninja) console.log('The only instance from Ninja constructor to ninja instance')\n\nfor (let prop in Ninja.prototype) {\n  if (prop === 'dance') console.log('The only enum property is dance')\n}"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "The only instance from Ninja constructor to ninja instance",
+                                "The only enum property is dance",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# ES6 Class are merely syntactic sugar\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "class Ninja{\n  constructor(name) {\n    this.name = name\n  }\n\n  swingSword() {\n    return true\n  }\n}\n// is equivalent to\nfunction Ninja(name) {\n  this.name = name\n}\nNinja.prototype.swingSword = function () {\n  return true\n}\n// similarly we use extends to add a subclass"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Summary\n\n- JS object are simple collections of named properties with values\n- JS uses prototypes\n- Every object can have reference to a prototype, which is kind of equivalent to a parent class. When the search for a property on the object isn't available, it will search for the prototype for that property. The prototype can have its own prototype, forming a prototype chain.\n- We can define an object prototype by using `Object.setPrototypeOf` method\n- Prototypes are closely linked to constructor function.\n- In JS, we can define properties attributes, including: configurable, enumerable, writeable. These can be define by `Object.defineProperty` method.\n- ES6 add `class` and `extends` keyword to allow mimic of OOP programming.\n\n1. 3-prototype\n2. a1 = Hello\n3. a1 = undefined\n4. If it's defined within the function, each instance of the function will have the method. On the second case, because it's defined within the prototype, all instances will point to the same method.\n5. it will point to the ninja's constructor. Changing the class prototype won't change the instance's constructor\n6. point to the `Person()` function\n7. true, because Warrior can be found on the prototype's chain of samurai\n8.\n```javascript\nfunction Warrior (weapon) {\n  this.weapon = weapon\n}\n\nWarrior.prototype.wield = function () { // normal function will be attached to the prototype\n  return \"Wielding \" + this.weapon\n}\nWarrior.duel = function(warrior1, warrior2) { // static will become function's property\n  return warrior1.wield() + \" \" + warrior2.wield()\n}\n```\n"
+            ],
+            "outputs": []
+        }
+    ]
+}
