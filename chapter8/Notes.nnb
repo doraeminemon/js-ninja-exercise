@@ -1,0 +1,95 @@
+{
+    "cells": [
+        {
+            "language": "markdown",
+            "source": [
+                "# Chapter 8\n\n- Using getters and setters to control access to object properties\n- Controlling access to objects through proxies\n- Using proxies for cross-cutting concern\n\nIn the previous chapter, we saw that JS objects are dynamic collection of properties."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "// ways to define a getter and setter\nconst ninjaCollection = {\n  ninja: [\"yoshi\"],\n  get firstNinja() { // getter\n    return this.ninjas[0]\n  },\n  set firstNinja(value) { // setter\n    this.ninjas[0] = value\n  }\n}\n// sometimes you can just define the getter, through Object.defineProperty\n\nfunction Ninja() {\n  let _skillLevel = 1\n  Object.defineProperty(this, 'skillLevel', {\n    get: () => {\n      return _skillLevel\n    }\n  })\n}\nconst ninja = new Ninja()\n\nif (ninja.skillLevel === 1) console.log('it works !')\n// we can use setter for value type validation\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "it works !",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Proxy\n\nProxy are a type of object that control the flow of getting and setting data, intercept any attempt to read and write data."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "// Proxy\nconst emperor = { name: 'Kohei' }\nconst representative = new Proxy(emperor, {\n  get: (target, key) => {\n    return key in target ? target[key] : \"Don't bother the emperor\"\n  },\n  set: (target, key, value) => {\n    target[key] = value\n  }\n})\n\nif (emperor.name === \"Kohei\") console.log(\"The emperor's name is Kohei\")\nif (representative.nickname === \"Don't bother the emperor\") console.log(\"Cannot access lah\")\nif (representative.name === \"Kohei\") console.log(\"The representative name is also Kohei\")\nif (emperor.nickname === undefined) console.log('If we access directly, it will be undefined')"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "The emperor's name is Kohei",
+                                "Cannot access lah",
+                                "The representative name is also Kohei",
+                                "If we access directly, it will be undefined",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "There are also different kinds of trap, other than `get` and `set`. There are `apply` to call a function, `construct` when using `new` keyword. `enumerate` will activate upon using `for-in` statements. `getPrototypeOf` and `setPrototypeOf` will be activate upon read and write the prototype value.\n\n## Using proxy for logging"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "// logging performance of a function\n\nfunction isPrime(number) {\n  if (number = 2) return false\n  for (let i = 2; i < number; i++) {\n    if (number % 2 === 0) return false\n  }\n  return true\n}\n\nisPrime = new Proxy(isPrime, {\n  apply: (target, thisArg, args) => {\n    console.time('isPrime')\n    const result = target.apply(thisArg, args)\n    console.timeEnd('isPrime')\n    return result\n  }\n})\n\nisPrime(1299827)"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "isPrime: 0.119ms",
+                                ""
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "\u001b[33mfalse\u001b[39m"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

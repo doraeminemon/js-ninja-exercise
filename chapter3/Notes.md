@@ -9,9 +9,9 @@
 
 # Understanding function invocations
 
-`arguments` is a implicit part of function which help us write flexible function that can handle multiple parameters easily. It’s similar to rest parameter in ES6. Rest parameter is a real array. 
+`arguments` is a implicit part of function which help us write flexible function that can handle multiple parameters easily. It’s similar to rest parameter in ES6. Rest parameter is a real array.
 
-`"use strict"` strict mode in ES5 will disable function parameter aliasing, which prevents reassigning it. 
+`"use strict"` strict mode in ES5 will disable function parameter aliasing, which prevents reassigning it.
 
 ## Invoking function
 
@@ -37,7 +37,6 @@ Will be related to `this`, which defines function context.
 ## As a constructor
 
 - will initialize an instance
-
 
 When a function with the keyword `new` triggers the following steps:
 
