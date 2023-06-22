@@ -1,0 +1,30 @@
+{
+    "cells": [
+        {
+            "language": "markdown",
+            "source": [
+                "# Chapter 9 - Regex\n\n- Regex needs compilation. So creation of every regex is actually different than the primitive types ( like Number or String )\n- Thus we should using the constructor to create new regex. It also allows for creating dynamic regex from string.\n- Also remember to use double escape `\\\\` because we are creating regex from a string.\n- In case of global match, a normal match will returns matches instead of captures as result\n- We can use Regex.exec function to regain the captures if we needed them, by repeatedly call this function.\n- We can refer to a capture group using \\1 syntax, called back-reference"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "const re = /(\\w+)\\s(\\w+)/;\nconst str = \"Maria Cruz\";\nconst newStr = str.replace(re, \"$2, $1\");\nconsole.log(newStr); // Cruz, Maria\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Cruz, Maria",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

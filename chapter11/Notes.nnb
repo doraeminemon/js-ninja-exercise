@@ -1,0 +1,11 @@
+{
+    "cells": [
+        {
+            "language": "markdown",
+            "source": [
+                "# Manipulating the DOM\n\n- Convert an arbitrary but valid HTML string into a DOM structure -> using the .innerHTML property of the DOM elements.\n- Inject that DOM structure into any location in the DOM as efficiently as possible\n- DOM fragment is a structure to inject DOM elements into the document efficiently.\n- Use `setAttribute` and `getAttribute` to manipulate attribute. Another way is to use the name of the attribute directly, like `.id` to get attribute `id` ( which is called property `id`)\n- The link between attribute and property only works for attributes that natively specified by HTML DOM. Custom attribute doesn't work.\n- Use the prefix `data-` for any custom attribute is to follow the HTML5 specification and a good convention overall.\n- Inline and assigned style are recorded, but inherited style aren't.\n- Since there are multiple ways to manipulate an element's style, `getComputedStyle` is available so that we can query the element's final style easily.\n- Notice of amalgam property, like `border: 1px solid black` will be computed into lower level value, like `border-top-color`.\n- Use `offsetWidth` and `offsetHeight` to access the dimension with padding\n- Use this trick to getting dimension of display:none object without it being visible:\n  - Change `display` to `block`\n  - Change `visibility` to `hidden`\n  - Set `position` to `absolute`\n  - Grab the dimension value\n  - Rollback all changed properties\n- Optimize for prevent layout thrashing by batching DOM read and write. This mechanic is also used in Facebook's React."
+            ],
+            "outputs": []
+        }
+    ]
+}
