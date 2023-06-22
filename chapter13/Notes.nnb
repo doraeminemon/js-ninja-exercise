@@ -1,0 +1,25 @@
+{
+    "cells": [
+        {
+            "language": "markdown",
+            "source": [
+                "# Surviving events\n\n- Macro task ( or just task ) and micro task.\n- Macro task example: creating the main document object, parsing HTML, page loading, input, network event, mouse, kb, network event, rendering HTML\n- Micro task example: jobs, DOM mutation, promises.\n\nEvent loop concept exists in both the browser and NodeJS. At least 1 queue for macro and 1 for micro task.\nIn a single loop iteration, only 1 macro task are processed, and all microtasks are processed.\n\n- The browser usually tries to render the page at 60 fps, equally 1 frame per 16ms."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "- Event that starts from the smallest element then move up -> `event bubbling`\n- Event that starts from the biggest element then move down -> `event capturing`\n\nCapturing first, then bubbling later.\nIn event handler, we can add the third argument as the option: `true` for event capturing, `false` for event bubbling. Default is bubbling."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "- The event that occurs doesn't have to be handled by that element, but anything of that parent container.\n\n## Custom event\n\n- Custom event will allow for loose coupling."
+            ],
+            "outputs": []
+        }
+    ]
+}
